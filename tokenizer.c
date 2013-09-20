@@ -2,6 +2,7 @@
  * tokenizer.c
  */
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 typedef enum {false, true} bool;
@@ -11,8 +12,9 @@ typedef enum {false, true} bool;
  */
 
 struct TokenizerT_ {
-    char *separators;
-    char *ts;
+    char *sep;
+    char *tokens_string;
+    bool *ascii_hash;
 };
 
 typedef struct TokenizerT_ TokenizerT;
@@ -32,14 +34,47 @@ typedef struct TokenizerT_ TokenizerT;
  */
 
 TokenizerT *TKCreate(char *separators, char *ts) {
-    char *separatorString = separators;
-    char *tokenStream = ts;
-    TokenizerT tokenizer;
-
+    int i;
+    printf("TKCreate\n---\n");
     /* allocate space for TokenizerT struct */
+    TokenizerT *tokenizer = (TokenizerT *) malloc(sizeof(TokenizerT));
+    if (tokenizer == NULL) {
+	printf("woops\n");
+	return NULL;
+    }
+    
+    tokenizer->sep = (char *)malloc(sizeof(strlen(separators)+1));
+    if (tokenizer->sep == NULL) {
+	printf("woops\n");
+	return NULL;
+    }
+    strcpy(tokenizer->sep, separators);
 
-    /* if fail, return */
-    return NULL;
+    tokenizer->tokens_string = (char *)malloc(sizeof(strlen(ts)+1));
+    if (tokenizer->tokens_string == NULL) {
+	printf("woops\n");
+	return NULL;
+    }
+    strcpy(tokenizer->tokens_string, ts);
+    printf("tokensstring = %s\n",(tokenizer->tokens_string));
+    
+    tokenizer->ascii_hash = (bool *) calloc(128, sizeof(bool));
+    if (tokenizer->ascii_hash == NULL) {
+	printf("woops\n");
+	return NULL;
+    }
+    else {
+	for (i=0; i<128; i++) {
+	    printf("%d",tokenizer->ascii_hash[i]);
+	}
+    }
+   
+
+    /* if fail, return 
+    return NULL;*/
+    printf("tokenizer struct address: %p\n", tokenizer);
+    printf("end TKCreate\n---\n");
+    return tokenizer;
 }
 
 /*
@@ -50,7 +85,13 @@ TokenizerT *TKCreate(char *separators, char *ts) {
  */
 
 void TKDestroy(TokenizerT *tk) {
-    
+    free(tk->sep);
+    tk->sep = NULL;
+    free(tk->tokens_string);
+    tk->tokens_string= NULL;
+    free(tk);
+    tk = NULL;
+    return;
 }
 
 /*
@@ -73,12 +114,12 @@ char *TKGetNextToken(TokenizerT *tk) {
 void generateSeparatorHash(char* word) {
     printf("whole sep string = %s\n", word);
     int i, j=0;
+
     bool escape = false;
     char * currChar = NULL;
     for (i=0; i<strlen(word); i++) {
 	/* previous character was a \ */
 	if (escape == true) {
-	     
 	    escape = false;
 	}
 	/* previous character wasn't a \ */
@@ -128,9 +169,13 @@ int main(int argc, char **argv) {
 	//create tokenizer here
 	printf("program name = %s\n", argv[0]);
 	printf("separator chars = %s\n", argv[1]);
+	TokenizerT *tk = TKCreate(argv[1], argv[2]);
+	printf("add %p\n", &tk);
+	printf("tk->ts=%s\n",tk->tokens_string);
 	generateSeparatorHash(argv[1]);
 	printf("tokens = %s\n", argv[2]);
 	splitByToken(argv[2]);
+	TKDestroy(tk);
     }
     
     return 0;
