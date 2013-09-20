@@ -141,7 +141,6 @@ void generateSeparatorHash(char* word, TokenizerT* tok) {
 	    /*printf("%d\n", (unsigned int)word[i]);*/
 	    printf("%d\n", word[i]-0);
 	    tok->ascii_hash[word[i]-0] = true;
-	    print_ascii_hash(tok->ascii_hash);
 	}
     }
 }
@@ -151,6 +150,9 @@ void print_ascii_hash(bool* ascii_hash){
     printf("ascii_hash values:\n");
     for (i=0; i<128; i++) {
 	printf("%d",ascii_hash[i]);
+	if (ascii_hash[i] == true) {
+	    printf("(%d)",i);
+	}
     }
     printf("\n----\n");
 }
@@ -188,6 +190,7 @@ int main(int argc, char **argv) {
 	printf("tk->sep=%s\n",tk->sep);
 	printf("tk->ts=%s\n",tk->tokens_string);
 	generateSeparatorHash(argv[1], tk);
+	print_ascii_hash(tk->ascii_hash);
 	printf("tokens = %s\n", argv[2]);
 	splitByToken(argv[2]);
 	TKDestroy(tk);
