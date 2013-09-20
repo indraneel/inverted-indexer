@@ -64,9 +64,11 @@ TokenizerT *TKCreate(char *separators, char *ts) {
 	return NULL;
     }
     else {
+	printf("ascii_hash values:\n");
 	for (i=0; i<128; i++) {
 	    printf("%d",tokenizer->ascii_hash[i]);
 	}
+	printf("\n----\n");
     }
    
 
@@ -111,7 +113,7 @@ char *TKGetNextToken(TokenizerT *tk) {
     return NULL;
 }
 
-void generateSeparatorHash(char* word) {
+void generateSeparatorHash(char* word, TokenizerT* tok) {
     printf("whole sep string = %s\n", word);
     int i, j=0;
 
@@ -127,7 +129,7 @@ void generateSeparatorHash(char* word) {
 	    if (word[i] == '\\') {
 		printf("escape sequence\n"); 
 		escape = true; 
-		currChar = word[i];
+		currChar = (char *)word[i];
 		printf("escape => %c\n", currChar);
 		continue;
 	    }
@@ -136,9 +138,21 @@ void generateSeparatorHash(char* word) {
 	    }
 	    printf("@%d => %c", i, word[i]);
 	    printf(" or ");
-	    printf("%x\n", (unsigned int)word[i]);
+	    /*printf("%d\n", (unsigned int)word[i]);*/
+	    printf("%d\n", word[i]-0);
+	    tok->ascii_hash[word[i]-0] = true;
+	    print_ascii_hash(tok->ascii_hash);
 	}
     }
+}
+
+void print_ascii_hash(bool* ascii_hash){
+    int i;
+    printf("ascii_hash values:\n");
+    for (i=0; i<128; i++) {
+	printf("%d",ascii_hash[i]);
+    }
+    printf("\n----\n");
 }
 
 void splitByToken(char* tokenString) {
@@ -170,9 +184,10 @@ int main(int argc, char **argv) {
 	printf("program name = %s\n", argv[0]);
 	printf("separator chars = %s\n", argv[1]);
 	TokenizerT *tk = TKCreate(argv[1], argv[2]);
-	printf("add %p\n", &tk);
+	printf("add %p\n", tk);
+	printf("tk->sep=%s\n",tk->sep);
 	printf("tk->ts=%s\n",tk->tokens_string);
-	generateSeparatorHash(argv[1]);
+	generateSeparatorHash(argv[1], tk);
 	printf("tokens = %s\n", argv[2]);
 	splitByToken(argv[2]);
 	TKDestroy(tk);
