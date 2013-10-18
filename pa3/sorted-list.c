@@ -19,7 +19,6 @@
 ////////////////////////////////////////
 SortedListPtr SLCreate(CompareFuncT cf) {
 
-
 	// Allocate memory for sorted list structure
 SortedListPtr sl = malloc(sizeof(struct SortedList));
 

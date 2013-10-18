@@ -20,6 +20,15 @@ int main(int argc, char** argv) {
 	    return 1;
 	}	
 
+	/*
+	FILE *f;
+	f = fopen(argv[1], "r");
+	if (f) {
+	    printf("This file already exists\nPlease choose a new name for your output file.\n"); 
+	    fclose(f);
+	    return;
+	}
+	*/
 	TrieNodePtr root = create_trie();
 	build_trie(root, argv[2]);
 

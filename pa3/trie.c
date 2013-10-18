@@ -35,6 +35,7 @@ void destroy_trienode(TrieNodePtr node) {
 	destroy_trienode((node->children[i]));
     }
 
+    SLDestroy(node->list);
     free(node->children);
     free(node);
     return;
@@ -60,7 +61,7 @@ TrieNodePtr get_root(TrieNodePtr node) {
     return node;
 }
 
-void print_trie(TrieNodePtr node, int depth) {
+void print_trie(TrieNodePtr node, int depth, char *outbuf) {
     int i;
     printf("\n");
     for (i=0; i<26; i++) {
@@ -70,9 +71,23 @@ void print_trie(TrieNodePtr node, int depth) {
 	    print_trie(node->children[i], depth+1);
 	}
     }
-
+    
     if (node->is_word) {
-	printf("this node = %s\tdepth = %d\n", node->word, depth);
+	//printf("this node = %s\tdepth = %d\n", node->word, depth);
+	printf("%s => [", node->word);
+	SortedListIteratorPtr iter = SLCreateIterator(node->list); 
+	void *item;	
+	item = SLNextItem(iter);
+	//printf("\niterating over node->list\n");
+	while(item) {
+	    //it matched something in list, update count and break
+	    printf("{%s,%d}", ((TuplePtr)item)->fileName, ((TuplePtr)item)->count);
+	    item = SLNextItem(iter);
+	    if(item)
+		    printf(", ");
+	}
+	SLDestroyIterator(iter);
+	printf("]\n");
     }
     return;
 }
@@ -90,7 +105,7 @@ void strtolower(char *string) {
 }
 
 void build_trie(TrieNodePtr node, char *path) {
-    char character, *file_contents, *token;
+    char character, *file_contents, *token;//, *output;
     FILE *file;
     DIR *dir;
     struct dirent *entry;
@@ -147,7 +162,7 @@ void build_trie(TrieNodePtr node, char *path) {
 
 			SortedListIteratorPtr iter = SLCreateIterator(node->list);
 			item = SLNextItem(iter);
-			printf("\niterating over node->list\n");
+			//printf("\niterating over node->list\n");
 			while(item) {
 			    //it matched something in list, update count and break
 			    if (strcmp((((TuplePtr)item)->fileName), path) == 0) {
@@ -167,16 +182,19 @@ void build_trie(TrieNodePtr node, char *path) {
 			    SLInsert(node->list, tuple); 
 			}
 
-
-
+			SLDestroyIterator(iter);
+			    
 			node = get_root(node);
 		    }
 		}
 		printf("\n");
 		//TODO add to the trie
 	    }
+	    //output = (char*) malloc(sizeof(char)*10240);
+	    //print_trie(node, 0, output);
 	    print_trie(node, 0);
-	
+	    //TODO save to file
+	    destroy_trienode(node);
 	}
 	TKDestroy(tok);
 	return;
@@ -217,16 +235,53 @@ void build_trie(TrieNodePtr node, char *path) {
 		    for (pos=0; pos<strlen(token); pos++) {
 			converted = token[pos] - 97;
 			if (node->children[converted] == NULL) {
+			    //printf("\ncreating a new node\n");
 			    node->children[converted] = create_trienode(token[pos], node);
 			}
 			node = node->children[converted];
 
 			if (node->c != ' ' && (pos == strlen(token)-1)) {
 			    node->is_word = true;
+			    node->word = (char*) calloc(strlen(token), sizeof(char));
+			    strcpy(node->word, token);
+			    
+			    tuple = (TuplePtr) malloc(sizeof(struct Tuple));
+			    tuple->fileName = (char*) calloc(strlen(path), sizeof(char));
+			    strcpy(tuple->fileName, path);
+			    tuple->count = 1;
+
+
+			    SortedListIteratorPtr iter = SLCreateIterator(node->list);
+			    item = SLNextItem(iter);
+			    printf("\niterating over node->list\n");
+			    while(item) {
+				//it matched something in list, update count and break
+				if (strcmp((((TuplePtr)item)->fileName), path) == 0) {
+				    printf("there's a dupe!\n");	
+				    (((TuplePtr)item)->count) = (((TuplePtr)item)->count)+1;
+				    found = true;
+				}
+				    printf("tuple: {%s,%d}", ((TuplePtr)item)->fileName, ((TuplePtr)item)->count);
+				    item = SLNextItem(iter);
+				    if(item)
+					    printf("->");
+			    }
+			    printf("\n\n");
+
+			    if (!found) {
+				printf("inserting tuple: {%s,%d}", tuple->fileName, tuple->count);
+				SLInsert(node->list, tuple); 
+			    }
+
+
+
 			    node = get_root(node);
 			}
 		    }
 		}
+		//output = (char*) malloc(sizeof(char)*10240);
+		//print_trie(node, 0, output);
+		print_trie(node, 0);
 	    }
 	    TKDestroy(tok);
 	}
@@ -234,24 +289,3 @@ void build_trie(TrieNodePtr node, char *path) {
     return;
 }
 
-/*
-    character = fgetc(file);
-    buffer = fgetc(file);
-
-    while(character != EOF) {
-	character = tolower(character);	
-
-	if (isalpha(character)) {
-	    converted = character - 97;
-	    if (ptr->children[converted] == NULL) {
-		ptr->children[converted] = create_trienode(character, ptr);
-	    }
-	    ptr = ptr->children[converted];
-	}
-
-	if (ptr != root && (!isalpha(character) || buffer == EOF)) {
-	    ptr->is_word = true;
-	    ptr = root;
-	}
-    }
-*/
