@@ -2,9 +2,9 @@
 #define SORTED_LIST_H
 
 #include <stdlib.h>
+#include "tuple.h"
 
-
-typedef int (*CompareFuncT)(void *, void *);
+typedef int (*CompareFuncT)(TuplePtr *, TuplePtr*);
 
 typedef struct Node *NodePtr;
 struct Node

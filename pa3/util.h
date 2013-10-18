@@ -10,7 +10,8 @@
 
 typedef enum {false, true} bool;
 
-//int compare_tuple(TuplePtr t1, TuplePtr t2);
+
+int compare_tuple(TuplePtr t1, TuplePtr t2);
 
 bool is_file (const char * path);
 

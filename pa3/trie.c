@@ -14,12 +14,13 @@ TrieNodePtr create_trienode(char c, TrieNodePtr parent) {
     if (parent) {
 	printf("char c for the parent  = %c\n", parent->c);
     }*/
+    CompareFuncT func = &compare_tuple;
     TrieNodePtr node = (TrieNodePtr) malloc (sizeof(struct TrieNode));
     node->c = c;
     node->parent = parent;
     node->children = malloc(26*sizeof(struct TrieNode));
     node->is_word = false;
-    //node->list = SLCreate(); //needs a function pointer
+    node->list = SLCreate(func); //needs a function pointer
     return node;
 }
 
@@ -70,7 +71,9 @@ void print_trie(TrieNodePtr node, int depth) {
 	}
     }
 
-    printf("this node = %c\tdepth = %d\n", node->c, depth);
+    if (node->is_word) {
+	printf("this node = %s\tdepth = %d\n", node->word, depth);
+    }
     return;
 }
 
@@ -95,7 +98,11 @@ void build_trie(TrieNodePtr node, char *path) {
     //char *newname = calloc(1024, sizeof(char));
     int num_bytes, pos, converted;
     long filesize;
+    void *item;
+    bool found = false;
     TokenizerT *tok;
+    TuplePtr tuple;
+
     //if (is_file(path)) {
   
     //not dir
@@ -115,6 +122,7 @@ void build_trie(TrieNodePtr node, char *path) {
 	//tok = TKCreate(x);
 	if (tok) {
 	    while( (token = TKGetNextToken(tok) ) != NULL) {
+		found = false;
 		pos = 0;
 		strtolower(token);
 		printf("next token: %s", token);
@@ -128,6 +136,39 @@ void build_trie(TrieNodePtr node, char *path) {
 
 		    if (node->c != ' ' && (pos == strlen(token)-1)) {
 			node->is_word = true;
+			node->word = (char*) calloc(strlen(token), sizeof(char));
+			strcpy(node->word, token);
+			
+			tuple = (TuplePtr) malloc(sizeof(struct Tuple));
+			tuple->fileName = (char*) calloc(strlen(path), sizeof(char));
+			strcpy(tuple->fileName, path);
+			tuple->count = 1;
+
+
+			SortedListIteratorPtr iter = SLCreateIterator(node->list);
+			item = SLNextItem(iter);
+			printf("\niterating over node->list\n");
+			while(item) {
+			    //it matched something in list, update count and break
+			    if (strcmp((((TuplePtr)item)->fileName), path) == 0) {
+				printf("there's a dupe!\n");	
+				(((TuplePtr)item)->count) = (((TuplePtr)item)->count)+1;
+				found = true;
+			    }
+				printf("tuple: {%s,%d}", ((TuplePtr)item)->fileName, ((TuplePtr)item)->count);
+				item = SLNextItem(iter);
+				if(item)
+					printf("->");
+			}
+			printf("\n\n");
+
+			if (!found) {
+			    printf("inserting tuple: {%s,%d}", tuple->fileName, tuple->count);
+			    SLInsert(node->list, tuple); 
+			}
+
+
+
 			node = get_root(node);
 		    }
 		}
