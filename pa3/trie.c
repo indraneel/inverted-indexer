@@ -10,6 +10,10 @@
 #include "tokenizer.c"
 
 TrieNodePtr create_trienode(char c, TrieNodePtr parent) {
+    /*printf("char c for this trienode = %c\n", c);
+    if (parent) {
+	printf("char c for the parent  = %c\n", parent->c);
+    }*/
     TrieNodePtr node = (TrieNodePtr) malloc (sizeof(struct TrieNode));
     node->c = c;
     node->parent = parent;
@@ -27,7 +31,7 @@ void destroy_trienode(TrieNodePtr node) {
     }
 
     for (i=0; i<26; i++) {
-	destroy_trienode(*(node->children[i]));
+	destroy_trienode((node->children[i]));
     }
 
     free(node->children);
@@ -46,6 +50,28 @@ TrieNodePtr create_trie() {
     int converted;
     int buffer;
     return root;
+}
+
+TrieNodePtr get_root(TrieNodePtr node) {
+    while (node->parent != NULL) {
+	node = node->parent;
+    }
+    return node;
+}
+
+void print_trie(TrieNodePtr node, int depth) {
+    int i;
+    printf("\n");
+    for (i=0; i<26; i++) {
+	if ((node->children[i])) {
+	    //printf("current node char c = '%c'\n", node->c);
+	    //printf("node char c of child #%d = '%c'\n", i, ((node->children[i]))->c);
+	    print_trie(node->children[i], depth+1);
+	}
+    }
+
+    printf("this node = %c\tdepth = %d\n", node->c, depth);
+    return;
 }
 
 //call like this strtolower(string);
@@ -67,7 +93,7 @@ void build_trie(TrieNodePtr node, char *path) {
     struct dirent *entry;
     char newname[1024];
     //char *newname = calloc(1024, sizeof(char));
-    int num_bytes, pos=0;
+    int num_bytes, pos, converted;
     long filesize;
     TokenizerT *tok;
     //if (is_file(path)) {
@@ -89,12 +115,27 @@ void build_trie(TrieNodePtr node, char *path) {
 	//tok = TKCreate(x);
 	if (tok) {
 	    while( (token = TKGetNextToken(tok) ) != NULL) {
-		printf("next token: %s\n", token);
-		/*
-		for (pos=0; pos < strlen(token); pos++) {
-		    printf("%c ", token[pos]);
-		}*/
+		pos = 0;
+		strtolower(token);
+		printf("next token: %s", token);
+		for (pos=0; pos<strlen(token); pos++) {
+		    converted = token[pos] - 97;
+		    if (node->children[converted] == NULL) {
+			//printf("\ncreating a new node\n");
+			node->children[converted] = create_trienode(token[pos], node);
+		    }
+		    node = node->children[converted];
+
+		    if (node->c != ' ' && (pos == strlen(token)-1)) {
+			node->is_word = true;
+			node = get_root(node);
+		    }
+		}
+		printf("\n");
+		//TODO add to the trie
 	    }
+	    print_trie(node, 0);
+	
 	}
 	TKDestroy(tok);
 	return;
@@ -117,9 +158,36 @@ void build_trie(TrieNodePtr node, char *path) {
 	    file = fopen(newname, "r");
 	    if (!file) return;
 	    //TODO cal tokenizer
-	    while ((character=fgetc(file)) != EOF) {
-		printf("%c\n", character);
+	    fseek(file, 0, SEEK_END);
+	    filesize = ftell(file);
+	    rewind(file);
+	    file_contents= (char*) calloc(filesize+1,sizeof(char));
+	    fread(file_contents, sizeof(char), filesize, file);
+	    fclose(file);
+
+	    printf("%s\n\n", file_contents);
+	    tok = TKCreate(file_contents);
+	    //tok = TKCreate(x);
+	    if (tok) {
+		while( (token = TKGetNextToken(tok) ) != NULL) {
+		    pos = 0;
+		    strtolower(token);
+		    printf("next token: %s", token);
+		    for (pos=0; pos<strlen(token); pos++) {
+			converted = token[pos] - 97;
+			if (node->children[converted] == NULL) {
+			    node->children[converted] = create_trienode(token[pos], node);
+			}
+			node = node->children[converted];
+
+			if (node->c != ' ' && (pos == strlen(token)-1)) {
+			    node->is_word = true;
+			    node = get_root(node);
+			}
+		    }
+		}
 	    }
+	    TKDestroy(tok);
 	}
     }
     return;

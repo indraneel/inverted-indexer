@@ -10,10 +10,10 @@
 typedef struct TrieNode* TrieNodePtr;
 struct TrieNode {
     char c;
-    TrieNodePtr *parent; 
-    TrieNodePtr **children; 
+    TrieNodePtr parent; 
+    TrieNodePtr *children; 
     bool is_word;    
-    SortedListPtr list;
+    //SortedListPtr list;
 };
 
 //Node Methods

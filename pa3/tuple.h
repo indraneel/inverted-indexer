@@ -3,6 +3,10 @@
 
 #include <stdlib.h>
 
+
+/*
+ * Represents < "/path/to/file", # of occurrences of a word in that file>
+ */
 struct Tuple
 {
     char* fileName;

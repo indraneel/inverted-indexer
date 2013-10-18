@@ -103,7 +103,7 @@ char* unescape_string(char* string) {
 	 * 
 	 */
 
-	printf("unecaping: %s\n", string);
+	//printf("unecaping: %s\n", string);
 	char* unescaped_string = (char*)malloc(strlen(string) * sizeof(char) + 1);
 	int current_position = 0;
 	int unescaped_string_position = 0;
