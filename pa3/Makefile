@@ -6,14 +6,15 @@ CFLAGS = -g -Wall
 
 all: index
 	
-index: index.o
-	$(CC) $(CFLAGS) -o index index.o
+index: indexer.c indexer.h util.h util.c trie.c trie.h
+	$(CC) $(CFLAGS) -o index indexer.c trie.c util.c 
 
-index.o: indexer.c indexer.h
-	$(CC) $(CFLAGS) 	
 
-trie: trie.o
+trie: trie.c trie.h
 	$(CC) $(CFLAGS) -o trie trie.c trie.h
+
+tokenizer: tokenizer.c
+	$(CC) $(CFLAGS) -o tokenizer tokenizer.c
 
 clean:
 	$(RM) index *.o *~

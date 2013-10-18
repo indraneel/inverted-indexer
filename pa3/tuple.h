@@ -1,5 +1,5 @@
-#ifndef	TWOPLE_H
-#define TWOPLE_H
+#ifndef	TUPLE_H
+#define TUPLE_H
 
 #include <stdlib.h>
 

@@ -171,7 +171,7 @@ char* unescape_string(char* string) {
  * You need to fill in this function as part of your implementation.
  */
 
-TokenizerT *TKCreate(char *separators, char *ts) {
+TokenizerT *TKCreate(char *ts) {
 	
 	/*
 	 * Description: creates a new tokenizer struct from the token stream and delimiters
@@ -181,7 +181,7 @@ TokenizerT *TKCreate(char *separators, char *ts) {
 	 * 
 	 */
 	 
-	if(separators == NULL || ts == NULL){
+	if(ts == NULL){
 		return NULL;
 	}
 	
@@ -191,7 +191,6 @@ TokenizerT *TKCreate(char *separators, char *ts) {
 		return NULL;
 	}
 	
-	tokenizer->delimiters = unescape_string(separators);
 	tokenizer->copied_string = unescape_string(ts);
 	tokenizer->current_position = tokenizer->copied_string;
 	
@@ -222,7 +221,7 @@ void TKDestroy(TokenizerT *tk) {
 }
 
 
-char is_delimiter(char character, char* delimiters) {
+char is_delimiter(char character) {
 	
 	/*
 	 * Description: determines if a particular character is a member of the set of delimiters
@@ -230,9 +229,8 @@ char is_delimiter(char character, char* delimiters) {
 	 * Modifies: Nothing
 	 * Returns: 1 if character is a delimiter, 0 if it is not
 	 */
-	
-	if (!((character >= 'a' && character <= 'z') || (character >='A' && character <='Z') || (character >= '0' && character <= '9'))) {
-		return 1;
+	if (isalnum(character) == 0){
+	    return 1;
 	}
 	else { return 0; }
 
@@ -264,7 +262,7 @@ char *TKGetNextToken(TokenizerT *tk) {
 	char* token_start = NULL;
 
 	while(tk->current_position - tk->copied_string < strlen(tk->copied_string)) {
-		if(!is_delimiter(*tk->current_position, tk->delimiters)) {
+		if(!is_delimiter(*tk->current_position)) {
 		
 			token_start = tk->current_position;
 			break;
@@ -277,7 +275,7 @@ char *TKGetNextToken(TokenizerT *tk) {
 	}
 	
 	while(tk->current_position - tk->copied_string < strlen(tk->copied_string)) {
-		if(is_delimiter(*tk->current_position, tk->delimiters)) {
+		if(is_delimiter(*tk->current_position )) {
 			break;
 		}
 		tk->current_position++;
@@ -297,14 +295,16 @@ char *TKGetNextToken(TokenizerT *tk) {
  * Each token should be printed on a separate line.
  */
 
+/*TODO
+ * Convert to work for files 
 int main(int argc, char **argv) {
 	
-	if(argc != 3){
+	if(argc != 2){
 		printf("Error: invalid number of arguments\n");
 		return -1;
 	}
 	
-	TokenizerT* tokenizer = TKCreate(argv[1], argv[2]);
+	TokenizerT* tokenizer = TKCreate(argv[1]);
 	
 	if(tokenizer == NULL) {
 		printf("Error: unable to create tokenizer\n");
@@ -321,3 +321,5 @@ int main(int argc, char **argv) {
 
 	return 0;
 }
+*/
+
