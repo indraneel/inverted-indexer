@@ -6,6 +6,9 @@
 #include "trie.h"
 #include "util.h"
 
+int compare_tuple(TuplePtr t1, TuplePtr t2) {
+    return ((t1->count)-(t2->count));
+}
 
 bool is_file (const char * path) {
     FILE *f;
