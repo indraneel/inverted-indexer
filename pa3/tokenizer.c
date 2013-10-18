@@ -15,7 +15,6 @@
 
 struct TokenizerT_ {
 	char* copied_string;
-	char* delimiters;		
 	char* current_position;
 };
 
@@ -215,7 +214,6 @@ void TKDestroy(TokenizerT *tk) {
 	 */
 	 
 	free(tk->copied_string);
-	free(tk->delimiters);
 	free(tk);
 	
 	return;
@@ -262,7 +260,7 @@ char *TKGetNextToken(TokenizerT *tk) {
 	char* token = NULL;
 	char* token_start = NULL;
 
-	printf("token getting split: %s\n", tk->copied_string);
+	///printf("token getting split: %s\n", tk->copied_string);
 	while(tk->current_position - tk->copied_string < strlen(tk->copied_string)) {
 		if(!is_delimiter(*tk->current_position)) {
 		
@@ -287,13 +285,14 @@ char *TKGetNextToken(TokenizerT *tk) {
 	token = (char*) calloc ((tk->current_position-tk->copied_string+1),sizeof(char));
 	strncpy(token, token_start, tk->current_position - token_start);
 	token[(tk->current_position - tk->copied_string)] = '\0';
-	if (token[strlen(token)-1] == '\0') {
-	    printf("null terminated\n\n");
+	//if (token[strlen(token)-1] == '\0') {
+	if (token[tk->current_position - tk->copied_string] == '\0') {
+	    //printf("null terminated @ index = %lu but the strlen-1 = %zu \n\n", tk->current_position - tk->copied_string, strlen(token)-1);
 	}
 	else {
-	    printf("uh oh. for the string = %s  it's=%c\n\n", token, token[strlen(token)-1]);
-	    printf("token[strlen-1] = %zu", strlen(token)-1);
-	    printf("tk->curr - tk->copied = %lu", tk->current_position - tk->copied_string);
+	    //printf("uh oh. for the string = %s  last is =%c\n\n", token, token[tk->current_position - tk->copied_string]);
+	    //printf("token[strlen-1] = %zu", strlen(token)-1);
+	    //printf("tk->curr - tk->copied = %lu", tk->current_position - tk->copied_string);
 	    //token[strlen(token)-1];
 	}
 	return token;

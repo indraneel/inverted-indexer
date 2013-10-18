@@ -89,13 +89,14 @@ void build_trie(TrieNodePtr node, char *path) {
 	//tok = TKCreate(x);
 	if (tok) {
 	    while( (token = TKGetNextToken(tok) ) != NULL) {
-		//printf("next token: %s\n", token);
+		printf("next token: %s\n", token);
 		/*
 		for (pos=0; pos < strlen(token); pos++) {
 		    printf("%c ", token[pos]);
 		}*/
 	    }
 	}
+	TKDestroy(tok);
 	return;
     }
 
