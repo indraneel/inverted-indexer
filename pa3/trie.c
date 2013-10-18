@@ -61,14 +61,14 @@ void strtolower(char *string) {
 }
 
 void build_trie(TrieNodePtr node, char *path) {
-    char character, *buffer, *token;
+    char character, *file_contents, *token;
     FILE *file;
     DIR *dir;
     struct dirent *entry;
     char newname[1024];
     //char *newname = calloc(1024, sizeof(char));
-    int num_bytes;
-    size_t filesize;
+    int num_bytes, pos=0;
+    long filesize;
     TokenizerT *tok;
     //if (is_file(path)) {
   
@@ -77,20 +77,23 @@ void build_trie(TrieNodePtr node, char *path) {
 	file = fopen(path, "r");
 	if (!file) return;
 	//TODO CaLL TOKENIZER
-	/*fseek(file, 0, SEEK_END);
+	fseek(file, 0, SEEK_END);
 	filesize = ftell(file);
 	rewind(file);
-	buffer = (char*) (malloc(sizeof(char)*filesize));*/
-	fread(buffer, sizeof(char), filesize, file);
+	file_contents= (char*) calloc(filesize+1,sizeof(char));
+	fread(file_contents, sizeof(char), filesize, file);
 	fclose(file);
 
-	char x[4] = "a b";
-	printf("%s\n\n", buffer);
-	tok = TKCreate(buffer);
+	printf("%s\n\n", file_contents);
+	tok = TKCreate(file_contents);
 	//tok = TKCreate(x);
 	if (tok) {
 	    while( (token = TKGetNextToken(tok) ) != NULL) {
-		printf("next token: %s\n", token);
+		//printf("next token: %s\n", token);
+		/*
+		for (pos=0; pos < strlen(token); pos++) {
+		    printf("%c ", token[pos]);
+		}*/
 	    }
 	}
 	return;

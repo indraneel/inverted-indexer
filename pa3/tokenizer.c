@@ -104,6 +104,7 @@ char* unescape_string(char* string) {
 	 * 
 	 */
 
+	printf("unecaping: %s\n", string);
 	char* unescaped_string = (char*)malloc(strlen(string) * sizeof(char) + 1);
 	int current_position = 0;
 	int unescaped_string_position = 0;
@@ -261,6 +262,7 @@ char *TKGetNextToken(TokenizerT *tk) {
 	char* token = NULL;
 	char* token_start = NULL;
 
+	printf("token getting split: %s\n", tk->copied_string);
 	while(tk->current_position - tk->copied_string < strlen(tk->copied_string)) {
 		if(!is_delimiter(*tk->current_position)) {
 		
@@ -281,9 +283,19 @@ char *TKGetNextToken(TokenizerT *tk) {
 		tk->current_position++;
 	}	
 
-	token = (char*)malloc(sizeof(char) * (tk->current_position - tk->copied_string + 1));
+	//token = (char*)malloc(sizeof(char) * (tk->current_position - tk->copied_string + 1));
+	token = (char*) calloc ((tk->current_position-tk->copied_string+1),sizeof(char));
 	strncpy(token, token_start, tk->current_position - token_start);
 	token[(tk->current_position - tk->copied_string)] = '\0';
+	if (token[strlen(token)-1] == '\0') {
+	    printf("null terminated\n\n");
+	}
+	else {
+	    printf("uh oh. for the string = %s  it's=%c\n\n", token, token[strlen(token)-1]);
+	    printf("token[strlen-1] = %zu", strlen(token)-1);
+	    printf("tk->curr - tk->copied = %lu", tk->current_position - tk->copied_string);
+	    //token[strlen(token)-1];
+	}
 	return token;
 }
 
