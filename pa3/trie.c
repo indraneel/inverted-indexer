@@ -18,7 +18,7 @@ TrieNodePtr create_trienode(char c, TrieNodePtr parent) {
     TrieNodePtr node = (TrieNodePtr) malloc (sizeof(struct TrieNode));
     node->c = c;
     node->parent = parent;
-    node->children = malloc(26*sizeof(struct TrieNode));
+    node->children = malloc(36*sizeof(struct TrieNode));
     node->is_word = false;
     node->list = SLCreate(func); //needs a function pointer
     return node;
@@ -31,7 +31,7 @@ void destroy_trienode(TrieNodePtr node) {
 	return;
     }
 
-    for (i=0; i<26; i++) {
+    for (i=0; i<36; i++) {
 	destroy_trienode((node->children[i]));
     }
 
@@ -61,10 +61,16 @@ TrieNodePtr get_root(TrieNodePtr node) {
     return node;
 }
 
-void print_trie(TrieNodePtr node, int depth, char *outbuf) {
+//void print_trie(TrieNodePtr node, int depth, char *outbuf) {
+void print_trie(TrieNodePtr node, int depth) {
     int i;
-    printf("\n");
-    for (i=0; i<26; i++) {
+    //printf("\n");
+    if (!node) return;
+    if (!node->children) return;
+    for (i=0; i<36; i++) {
+	if (!(node->children[i])) {
+	    continue;
+	}
 	if ((node->children[i])) {
 	    //printf("current node char c = '%c'\n", node->c);
 	    //printf("node char c of child #%d = '%c'\n", i, ((node->children[i]))->c);
@@ -142,7 +148,13 @@ void build_trie(TrieNodePtr node, char *path) {
 		strtolower(token);
 		printf("next token: %s", token);
 		for (pos=0; pos<strlen(token); pos++) {
-		    converted = token[pos] - 97;
+		    //is not alpha
+		    if ( isalpha(token[pos]) == 0 ) {
+			converted = token[pos];
+		    }
+		    else {
+			converted = token[pos] - 87;
+		    }
 		    if (node->children[converted] == NULL) {
 			//printf("\ncreating a new node\n");
 			node->children[converted] = create_trienode(token[pos], node);
@@ -228,13 +240,22 @@ void build_trie(TrieNodePtr node, char *path) {
 	    tok = TKCreate(file_contents);
 	    //tok = TKCreate(x);
 	    if (tok) {
-		while( (token = TKGetNextToken(tok) ) != NULL) {
+		token = TKGetNextToken(tok);
+		if (!token) return;
+		//while( (token = TKGetNextToken(tok) ) != NULL) {
+		do {
 		    pos = 0;
 		    strtolower(token);
 		    printf("next token: %s", token);
 		    for (pos=0; pos<strlen(token); pos++) {
-			converted = token[pos] - 97;
-			if (node->children[converted] == NULL) {
+			//is not alpha
+			if (isalpha(token[pos]) == 0) {
+			    converted = token[pos];
+			}
+			else {
+			    converted = token[pos] - 87;
+			}
+			if (!node->children[converted]) {
 			    //printf("\ncreating a new node\n");
 			    node->children[converted] = create_trienode(token[pos], node);
 			}
@@ -242,11 +263,11 @@ void build_trie(TrieNodePtr node, char *path) {
 
 			if (node->c != ' ' && (pos == strlen(token)-1)) {
 			    node->is_word = true;
-			    node->word = (char*) calloc(strlen(token), sizeof(char));
+			    node->word = (char*) calloc(strlen(token)+1, sizeof(char));
 			    strcpy(node->word, token);
 			    
 			    tuple = (TuplePtr) malloc(sizeof(struct Tuple));
-			    tuple->fileName = (char*) calloc(strlen(path), sizeof(char));
+			    tuple->fileName = (char*) calloc(strlen(path)+1, sizeof(char));
 			    strcpy(tuple->fileName, path);
 			    tuple->count = 1;
 
@@ -279,6 +300,7 @@ void build_trie(TrieNodePtr node, char *path) {
 			}
 		    }
 		}
+		while( (token = TKGetNextToken(tok) ) != NULL);
 		//output = (char*) malloc(sizeof(char)*10240);
 		//print_trie(node, 0, output);
 		print_trie(node, 0);

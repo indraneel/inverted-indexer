@@ -1,0 +1,619 @@
+==24182== Memcheck, a memory error detector
+==24182== Copyright (C) 2002-2012, and GNU GPL'd, by Julian Seward et al.
+==24182== Using Valgrind-3.8.1 and LibVEX; rerun with -h for copyright info
+==24182== Command: ./index out testfiles/moretext
+==24182== 
+--24182-- Valgrind options:
+--24182--    -v
+--24182-- Contents of /proc/version:
+--24182--   Linux version 2.6.32-358.14.1.el6.x86_64 (mockbuild@c6b10.bsys.dev.centos.org) (gcc version 4.4.7 20120313 (Red Hat 4.4.7-3) (GCC) ) #1 SMP Tue Jul 16 23:51:20 UTC 2013
+--24182-- Arch and hwcaps: AMD64, amd64-sse3-cx16-avx
+--24182-- Page sizes: currently 4096, max supported 4096
+--24182-- Valgrind library directory: /usr/lib64/valgrind
+--24182-- Reading syms from /.autofs/ilab/ilab_users/ip132/214/pa3/index
+--24182-- Reading syms from /lib64/ld-2.12.so
+--24182--   Considering /usr/lib/debug/.build-id/de/7d207393d303af233e6ad4d1e8a8314843422a.debug ..
+--24182--   .. build-id is valid
+--24182-- Reading syms from /usr/lib64/valgrind/memcheck-amd64-linux
+--24182--    object doesn't have a dynamic symbol table
+--24182-- Scheduler: using generic scheduler lock implementation.
+--24182-- Reading suppressions file: /usr/lib64/valgrind/default.supp
+==24182== embedded gdbserver: reading from /tmp/vgdb-pipe-from-vgdb-to-24182-by-ip132-on-php.cs.rutgers.edu
+==24182== embedded gdbserver: writing to   /tmp/vgdb-pipe-to-vgdb-from-24182-by-ip132-on-php.cs.rutgers.edu
+==24182== embedded gdbserver: shared mem   /tmp/vgdb-pipe-shared-mem-vgdb-24182-by-ip132-on-php.cs.rutgers.edu
+==24182== 
+==24182== TO CONTROL THIS PROCESS USING vgdb (which you probably
+==24182== don't want to do, unless you know exactly what you're doing,
+==24182== or are doing some strange experiment):
+==24182==   /usr/lib64/valgrind/../../bin/vgdb --pid=24182 ...command...
+==24182== 
+==24182== TO DEBUG THIS PROCESS USING GDB: start GDB like this
+==24182==   /path/to/gdb ./index
+==24182== and then give GDB the following command
+==24182==   target remote | /usr/lib64/valgrind/../../bin/vgdb --pid=24182
+==24182== --pid is optional if only one valgrind process is running
+==24182== 
+--24182-- REDIR: 0x4017520 (strlen) redirected to 0x38049551 (vgPlain_amd64_linux_REDIR_FOR_strlen)
+--24182-- Reading syms from /usr/lib64/valgrind/vgpreload_core-amd64-linux.so
+--24182-- Reading syms from /usr/lib64/valgrind/vgpreload_memcheck-amd64-linux.so
+--24182-- REDIR: 0x4017390 (index) redirected to 0x4c28bf0 (index)
+--24182-- REDIR: 0x4017410 (strcmp) redirected to 0x4c29530 (strcmp)
+--24182-- Reading syms from /lib64/libc-2.12.so
+--24182--   Considering /usr/lib/debug/.build-id/66/b744d7d3b8201145c2c40e7a201f61b73e77d0.debug ..
+--24182--   .. build-id is valid
+--24182-- REDIR: 0x4eb3ec0 (strcasecmp) redirected to 0x4a2255c (_vgnU_ifunc_wrapper)
+--24182-- REDIR: 0x4eb6180 (strncasecmp) redirected to 0x4a2255c (_vgnU_ifunc_wrapper)
+--24182-- REDIR: 0x4eb1e30 (__GI_strrchr) redirected to 0x4c28a70 (__GI_strrchr)
+--24182-- REDIR: 0x4eb0310 (strlen) redirected to 0x4a2255c (_vgnU_ifunc_wrapper)
+--24182-- REDIR: 0x4f61d90 (__strlen_sse42) redirected to 0x4c28f50 (strlen)
+--24182-- REDIR: 0x4ea98e0 (malloc) redirected to 0x4c2796c (malloc)
+--24182-- REDIR: 0x4eb0350 (__GI_strlen) redirected to 0x4c28f70 (__GI_strlen)
+--24182-- REDIR: 0x4eb29f0 (memmove) redirected to 0x4c2aab0 (memmove)
+--24182-- REDIR: 0x4eae8d0 (strcmp) redirected to 0x4a2255c (_vgnU_ifunc_wrapper)
+--24182-- REDIR: 0x4f56ac0 (__strcmp_sse42) redirected to 0x4c29490 (strcmp)
+--24182-- REDIR: 0x4eb9ce0 (strchrnul) redirected to 0x4c2af10 (strchrnul)
+--24182-- REDIR: 0x4eb36f0 (mempcpy) redirected to 0x4c2af80 (mempcpy)
+--24182-- REDIR: 0x4eaa710 (free) redirected to 0x4c27369 (free)
+--24182-- REDIR: 0x4ea9520 (calloc) redirected to 0x4c266d7 (calloc)
+--24182-- REDIR: 0x4eb8860 (memcpy) redirected to 0x4c29b20 (memcpy)
+==24182== Invalid write of size 1
+==24182==    at 0x400F70: unescape_string (tokenizer.c:152)
+==24182==    by 0x400FBF: TKCreate (tokenizer.c:194)
+==24182==    by 0x401B23: build_trie (trie.c:240)
+==24182==    by 0x401A25: build_trie (trie.c:222)
+==24182==    by 0x400C27: main (indexer.c:33)
+==24182==  Address 0x51dac80 is 0 bytes after a block of size 16 alloc'd
+==24182==    at 0x4C279EE: malloc (vg_replace_malloc.c:270)
+==24182==    by 0x400D6D: unescape_string (tokenizer.c:107)
+==24182==    by 0x400FBF: TKCreate (tokenizer.c:194)
+==24182==    by 0x401B23: build_trie (trie.c:240)
+==24182==    by 0x401A25: build_trie (trie.c:222)
+==24182==    by 0x400C27: main (indexer.c:33)
+==24182== 
+==24182== Conditional jump or move depends on uninitialised value(s)
+==24182==    at 0x4C28F68: strlen (mc_replace_strmem.c:403)
+==24182==    by 0x4010C7: TKGetNextToken (tokenizer.c:264)
+==24182==    by 0x401E86: build_trie (trie.c:244)
+==24182==    by 0x401A25: build_trie (trie.c:222)
+==24182==    by 0x400C27: main (indexer.c:33)
+==24182== 
+==24182== Conditional jump or move depends on uninitialised value(s)
+==24182==    at 0x40135E: print_trie (trie.c:71)
+==24182==    by 0x401EA9: build_trie (trie.c:303)
+==24182==    by 0x401A25: build_trie (trie.c:222)
+==24182==    by 0x400C27: main (indexer.c:33)
+==24182== 
+==24182== Conditional jump or move depends on uninitialised value(s)
+==24182==    at 0x4C28F68: strlen (mc_replace_strmem.c:403)
+==24182==    by 0x40113A: TKGetNextToken (tokenizer.c:277)
+==24182==    by 0x401E86: build_trie (trie.c:244)
+==24182==    by 0x401A25: build_trie (trie.c:222)
+==24182==    by 0x400C27: main (indexer.c:33)
+==24182== 
+--24182-- REDIR: 0x4eb1dd0 (strncpy) redirected to 0x4a2255c (_vgnU_ifunc_wrapper)
+--24182-- REDIR: 0x4f63240 (???) redirected to 0x4c29130 (strncpy)
+==24182== Conditional jump or move depends on uninitialised value(s)
+==24182==    at 0x401BED: build_trie (trie.c:256)
+==24182==    by 0x401A25: build_trie (trie.c:222)
+==24182==    by 0x400C27: main (indexer.c:33)
+==24182== 
+--24182-- REDIR: 0x4eafd60 (strcpy) redirected to 0x4a2255c (_vgnU_ifunc_wrapper)
+--24182-- REDIR: 0x4f62820 (???) redirected to 0x4c28f90 (strcpy)
+==24182== Conditional jump or move depends on uninitialised value(s)
+==24182==    at 0x40135E: print_trie (trie.c:71)
+==24182==    by 0x4013A4: print_trie (trie.c:77)
+==24182==    by 0x401EA9: build_trie (trie.c:303)
+==24182==    by 0x401A25: build_trie (trie.c:222)
+==24182==    by 0x400C27: main (indexer.c:33)
+==24182== 
+==24182== Conditional jump or move depends on uninitialised value(s)
+==24182==    at 0x40135E: print_trie (trie.c:71)
+==24182==    by 0x4013A4: print_trie (trie.c:77)
+==24182==    by 0x4013A4: print_trie (trie.c:77)
+==24182==    by 0x401EA9: build_trie (trie.c:303)
+==24182==    by 0x401A25: build_trie (trie.c:222)
+==24182==    by 0x400C27: main (indexer.c:33)
+==24182== 
+==24182== Conditional jump or move depends on uninitialised value(s)
+==24182==    at 0x40135E: print_trie (trie.c:71)
+==24182==    by 0x4013A4: print_trie (trie.c:77)
+==24182==    by 0x4013A4: print_trie (trie.c:77)
+==24182==    by 0x4013A4: print_trie (trie.c:77)
+==24182==    by 0x401EA9: build_trie (trie.c:303)
+==24182==    by 0x401A25: build_trie (trie.c:222)
+==24182==    by 0x400C27: main (indexer.c:33)
+==24182== 
+==24182== Invalid write of size 1
+==24182==    at 0x400F70: unescape_string (tokenizer.c:152)
+==24182==    by 0x400FBF: TKCreate (tokenizer.c:194)
+==24182==    by 0x401B23: build_trie (trie.c:240)
+==24182==    by 0x400C27: main (indexer.c:33)
+==24182==  Address 0x51e67d4 is 0 bytes after a block of size 52 alloc'd
+==24182==    at 0x4C279EE: malloc (vg_replace_malloc.c:270)
+==24182==    by 0x400D6D: unescape_string (tokenizer.c:107)
+==24182==    by 0x400FBF: TKCreate (tokenizer.c:194)
+==24182==    by 0x401B23: build_trie (trie.c:240)
+==24182==    by 0x400C27: main (indexer.c:33)
+==24182== 
+==24182== Conditional jump or move depends on uninitialised value(s)
+==24182==    at 0x4C28F68: strlen (mc_replace_strmem.c:403)
+==24182==    by 0x4010C7: TKGetNextToken (tokenizer.c:264)
+==24182==    by 0x401E86: build_trie (trie.c:244)
+==24182==    by 0x400C27: main (indexer.c:33)
+==24182== 
+==24182== Conditional jump or move depends on uninitialised value(s)
+==24182==    at 0x4C28F68: strlen (mc_replace_strmem.c:403)
+==24182==    by 0x40113A: TKGetNextToken (tokenizer.c:277)
+==24182==    by 0x401E86: build_trie (trie.c:244)
+==24182==    by 0x400C27: main (indexer.c:33)
+==24182== 
+==24182== Conditional jump or move depends on uninitialised value(s)
+==24182==    at 0x401BED: build_trie (trie.c:256)
+==24182==    by 0x400C27: main (indexer.c:33)
+==24182== 
+==24182== Conditional jump or move depends on uninitialised value(s)
+==24182==    at 0x40135E: print_trie (trie.c:71)
+==24182==    by 0x401EA9: build_trie (trie.c:303)
+==24182==    by 0x400C27: main (indexer.c:33)
+==24182== 
+==24182== Conditional jump or move depends on uninitialised value(s)
+==24182==    at 0x40135E: print_trie (trie.c:71)
+==24182==    by 0x4013A4: print_trie (trie.c:77)
+==24182==    by 0x401EA9: build_trie (trie.c:303)
+==24182==    by 0x400C27: main (indexer.c:33)
+==24182== 
+==24182== Conditional jump or move depends on uninitialised value(s)
+==24182==    at 0x4C28F59: strlen (mc_replace_strmem.c:403)
+==24182==    by 0x4010C7: TKGetNextToken (tokenizer.c:264)
+==24182==    by 0x401E86: build_trie (trie.c:244)
+==24182==    by 0x400C27: main (indexer.c:33)
+==24182== 
+this should be a dir: testfiles/moretext
+this should be a dir: testfiles/moretext/subtext1
+this should be a dir: testfiles/moretext/subtext1
+$$(@*#@(!":::/
+
+
+this should be a dir: testfiles/moretext/subtext1
+shane.ohanlon93@gmail.com
+
+
+next token: shane
+iterating over node->list
+
+
+inserting tuple: {testfiles/moretext/subtext1,1}next token: ohanlon93
+iterating over node->list
+
+
+inserting tuple: {testfiles/moretext/subtext1,1}next token: gmail
+iterating over node->list
+
+
+inserting tuple: {testfiles/moretext/subtext1,1}next token: com
+iterating over node->list
+
+
+inserting tuple: {testfiles/moretext/subtext1,1}com => [{testfiles/moretext/subtext1,1}]
+gmail => [{testfiles/moretext/subtext1,1}]
+shane => [{testfiles/moretext/subtext1,1}]
+this should be a dir: testfiles/moretext
+The jumps fox jumps over the quick brown jumps dog
+
+
+next token: the
+iterating over node->list
+
+
+inserting tuple: {testfiles/moretext,1}next token: jumps
+iterating over node->list
+
+
+inserting tuple: {testfiles/moretext,1}next token: fox
+iterating over node->list
+
+
+inserting tuple: {testfiles/moretext,1}next token: jumps
+iterating over node->list
+there's a dupe!
+tuple: {testfiles/moretext,2}
+
+next token: over
+iterating over node->list
+
+
+next token: the
+iterating over node->list
+there's a dupe!
+tuple: {testfiles/moretext,2}
+
+next token: quick
+iterating over node->list
+
+
+next token: brown
+iterating over node->list
+
+
+next token: jumps
+iterating over node->list
+there's a dupe!
+tuple: {testfiles/moretext,3}
+
+next token: dog
+iterating over node->list
+
+
+brown => []
+com => [{testfiles/moretext/subtext1,1}]
+dog => []
+fox => [{testfiles/moretext,1}]
+gmail => [{testfiles/moretext/subtext1,1}]
+jumps => [{testfiles/moretext,3}]
+over => []
+quick => []
+shane => [{testfiles/moretext/subtext1,1}]
+the => [{testfiles/moretext,2}]
+this should be a dir: testfiles/moretext
+The dog hit the bro1wn dog
+
+
+next token: the
+iterating over node->list
+there's a dupe!
+tuple: {testfiles/moretext,3}
+
+next token: dog
+iterating over node->list
+
+
+next token: hit
+iterating over node->list
+
+
+next token: the
+iterating over node->list
+there's a dupe!
+tuple: {testfiles/moretext,4}
+
+next token: bro1wn
+iterating over node->list
+
+
+next token: dog
+iterating over node->list
+
+
+brown => []
+com => [{testfiles/moretext/subtext1,1}]
+dog => []
+fox => [{testfiles/moretext,1}]
+gmail => [{testfiles/moretext/subtext1,1}]
+hit => []
+jumps => [{testfiles/moretext,3}]
+over => []
+quick => []
+shane => [{testfiles/moretext/subtext1,1}]
+the => [{testfiles/moretext,4}]
+this should be a dir: testfiles/moretext
+I made $$$
+
+
+next token: i
+iterating over node->list
+
+
+next token: made
+iterating over node->list
+
+
+brown => []
+com => [{testfiles/moretext/subtext1,1}]
+dog => []
+fox => [{testfiles/moretext,1}]
+gmail => [{testfiles/moretext/subtext1,1}]
+hit => []
+i => []
+jumps => [{testfiles/moretext,3}]
+made => []
+over => []
+quick => []
+shane => [{testfiles/moretext/subtext1,1}]
+the => [{testfiles/moretext,4}]
+this should be a dir: testfiles/moretext
+Th$3$e dog made 9$$$
+
+
+next token: th
+iterating over node->list
+
+
+next token: 3
+iterating over node->list
+
+
+next token: e
+iterating over node->list
+
+
+next token: dog
+iterating over node->list
+
+
+next token: made
+iterating over node->list
+
+
+next token: 9
+iterating over node->list
+
+
+brown => []
+com => [{testfiles/moretext/subtext1,1}]
+dog => []
+e => []
+fox => [{testfiles/moretext,1}]
+gmail => [{testfiles/moretext/subtext1,1}]
+hit => []
+i => []
+jumps => [{testfiles/moretext,3}]
+made => []
+over => []
+quick => []
+shane => [{testfiles/moretext/subtext1,1}]
+the => [{testfiles/moretext,4}]
+th => []
+this should be a dir: testfiles/moretext
+random words
+
+
+next token: random
+iterating over node->list
+
+
+next token: words
+iterating over node->list
+
+
+brown => []
+com => [{testfiles/moretext/subtext1,1}]
+dog => []
+e => []
+fox => [{testfiles/moretext,1}]
+gmail => [{testfiles/moretext/subtext1,1}]
+hit => []
+i => []
+jumps => [{testfiles/moretext,3}]
+made => []
+over => []
+quick => []
+random => []
+shane => [{testfiles/moretext/subtext1,1}]
+the => [{testfiles/moretext,4}]
+th => []
+words => []
+this should be a dir: testfiles/moretext
+
+
+brown => []
+com => [{testfiles/moretext/subtext1,1}]
+dog => []
+e => []
+fox => [{testfiles/moretext,1}]
+gmail => [{testfiles/moretext/subtext1,1}]
+hit => []
+i => []
+jumps => [{testfiles/moretext,3}]
+made => []
+over => []
+quick => []
+random => []
+shane => [{testfiles/moretext/subtext1,1}]
+the => [{testfiles/moretext,4}]
+th => []
+words => []
+this should be a dir: testfiles/moretext
+this should be a dir: testfiles/moretext/subtext2
+i.m.indraneel@gmail.com
+
+
+next token: i
+iterating over node->list
+
+
+inserting tuple: {testfiles/moretext/subtext2,1}next token: m
+iterating over node->list
+
+
+inserting tuple: {testfiles/moretext/subtext2,1}next token: indraneel
+iterating over node->list
+
+
+inserting tuple: {testfiles/moretext/subtext2,1}next token: gmail
+iterating over node->list
+tuple: {testfiles/moretext/subtext1,1}
+
+inserting tuple: {testfiles/moretext/subtext2,1}next token: com
+iterating over node->list
+tuple: {testfiles/moretext/subtext1,1}
+
+inserting tuple: {testfiles/moretext/subtext2,1}brown => []
+com => [{testfiles/moretext/subtext2,1}, {testfiles/moretext/subtext1,1}]
+dog => []
+e => []
+fox => [{testfiles/moretext,1}]
+gmail => [{testfiles/moretext/subtext2,1}, {testfiles/moretext/subtext1,1}]
+hit => []
+indraneel => [{testfiles/moretext/subtext2,1}]
+i => [{testfiles/moretext/subtext2,1}]
+jumps => [{testfiles/moretext,3}]
+made => []
+m => [{testfiles/moretext/subtext2,1}]
+over => []
+quick => []
+random => []
+shane => [{testfiles/moretext/subtext1,1}]
+the => [{testfiles/moretext,4}]
+th => []
+words => []
+==24182== 
+==24182== HEAP SUMMARY:
+==24182==     in use at exit: 283,354 bytes in 449 blocks
+==24182==   total heap usage: 581 allocs, 132 frees, 291,327 bytes allocated
+==24182== 
+==24182== Searching for pointers to 449 not-freed blocks
+==24182== Checked 65,096 bytes
+==24182== 
+==24182== LEAK SUMMARY:
+==24182==    definitely lost: 133,327 bytes in 119 blocks
+==24182==    indirectly lost: 150,027 bytes in 330 blocks
+==24182==      possibly lost: 0 bytes in 0 blocks
+==24182==    still reachable: 0 bytes in 0 blocks
+==24182==         suppressed: 0 bytes in 0 blocks
+==24182== Rerun with --leak-check=full to see details of leaked memory
+==24182== 
+==24182== Use --track-origins=yes to see where uninitialised values come from
+==24182== ERROR SUMMARY: 15977 errors from 15 contexts (suppressed: 6 from 6)
+==24182== 
+==24182== 1 errors in context 1 of 15:
+==24182== Conditional jump or move depends on uninitialised value(s)
+==24182==    at 0x4C28F59: strlen (mc_replace_strmem.c:403)
+==24182==    by 0x4010C7: TKGetNextToken (tokenizer.c:264)
+==24182==    by 0x401E86: build_trie (trie.c:244)
+==24182==    by 0x400C27: main (indexer.c:33)
+==24182== 
+==24182== 
+==24182== 3 errors in context 2 of 15:
+==24182== Invalid write of size 1
+==24182==    at 0x400F70: unescape_string (tokenizer.c:152)
+==24182==    by 0x400FBF: TKCreate (tokenizer.c:194)
+==24182==    by 0x401B23: build_trie (trie.c:240)
+==24182==    by 0x401A25: build_trie (trie.c:222)
+==24182==    by 0x400C27: main (indexer.c:33)
+==24182==  Address 0x51dac80 is 0 bytes after a block of size 16 alloc'd
+==24182==    at 0x4C279EE: malloc (vg_replace_malloc.c:270)
+==24182==    by 0x400D6D: unescape_string (tokenizer.c:107)
+==24182==    by 0x400FBF: TKCreate (tokenizer.c:194)
+==24182==    by 0x401B23: build_trie (trie.c:240)
+==24182==    by 0x401A25: build_trie (trie.c:222)
+==24182==    by 0x400C27: main (indexer.c:33)
+==24182== 
+==24182== 
+==24182== 6 errors in context 3 of 15:
+==24182== Invalid write of size 1
+==24182==    at 0x400F70: unescape_string (tokenizer.c:152)
+==24182==    by 0x400FBF: TKCreate (tokenizer.c:194)
+==24182==    by 0x401B23: build_trie (trie.c:240)
+==24182==    by 0x400C27: main (indexer.c:33)
+==24182==  Address 0x51e67d4 is 0 bytes after a block of size 52 alloc'd
+==24182==    at 0x4C279EE: malloc (vg_replace_malloc.c:270)
+==24182==    by 0x400D6D: unescape_string (tokenizer.c:107)
+==24182==    by 0x400FBF: TKCreate (tokenizer.c:194)
+==24182==    by 0x401B23: build_trie (trie.c:240)
+==24182==    by 0x400C27: main (indexer.c:33)
+==24182== 
+==24182== 
+==24182== 30 errors in context 4 of 15:
+==24182== Conditional jump or move depends on uninitialised value(s)
+==24182==    at 0x401BED: build_trie (trie.c:256)
+==24182==    by 0x401A25: build_trie (trie.c:222)
+==24182==    by 0x400C27: main (indexer.c:33)
+==24182== 
+==24182== 
+==24182== 36 errors in context 5 of 15:
+==24182== Conditional jump or move depends on uninitialised value(s)
+==24182==    at 0x4C28F68: strlen (mc_replace_strmem.c:403)
+==24182==    by 0x4010C7: TKGetNextToken (tokenizer.c:264)
+==24182==    by 0x401E86: build_trie (trie.c:244)
+==24182==    by 0x401A25: build_trie (trie.c:222)
+==24182==    by 0x400C27: main (indexer.c:33)
+==24182== 
+==24182== 
+==24182== 50 errors in context 6 of 15:
+==24182== Conditional jump or move depends on uninitialised value(s)
+==24182==    at 0x4C28F68: strlen (mc_replace_strmem.c:403)
+==24182==    by 0x40113A: TKGetNextToken (tokenizer.c:277)
+==24182==    by 0x401E86: build_trie (trie.c:244)
+==24182==    by 0x401A25: build_trie (trie.c:222)
+==24182==    by 0x400C27: main (indexer.c:33)
+==24182== 
+==24182== 
+==24182== 52 errors in context 7 of 15:
+==24182== Conditional jump or move depends on uninitialised value(s)
+==24182==    at 0x401BED: build_trie (trie.c:256)
+==24182==    by 0x400C27: main (indexer.c:33)
+==24182== 
+==24182== 
+==24182== 64 errors in context 8 of 15:
+==24182== Conditional jump or move depends on uninitialised value(s)
+==24182==    at 0x4C28F68: strlen (mc_replace_strmem.c:403)
+==24182==    by 0x4010C7: TKGetNextToken (tokenizer.c:264)
+==24182==    by 0x401E86: build_trie (trie.c:244)
+==24182==    by 0x400C27: main (indexer.c:33)
+==24182== 
+==24182== 
+==24182== 88 errors in context 9 of 15:
+==24182== Conditional jump or move depends on uninitialised value(s)
+==24182==    at 0x40135E: print_trie (trie.c:71)
+==24182==    by 0x401EA9: build_trie (trie.c:303)
+==24182==    by 0x401A25: build_trie (trie.c:222)
+==24182==    by 0x400C27: main (indexer.c:33)
+==24182== 
+==24182== 
+==24182== 116 errors in context 10 of 15:
+==24182== Conditional jump or move depends on uninitialised value(s)
+==24182==    at 0x4C28F68: strlen (mc_replace_strmem.c:403)
+==24182==    by 0x40113A: TKGetNextToken (tokenizer.c:277)
+==24182==    by 0x401E86: build_trie (trie.c:244)
+==24182==    by 0x400C27: main (indexer.c:33)
+==24182== 
+==24182== 
+==24182== 136 errors in context 11 of 15:
+==24182== Conditional jump or move depends on uninitialised value(s)
+==24182==    at 0x40135E: print_trie (trie.c:71)
+==24182==    by 0x401EA9: build_trie (trie.c:303)
+==24182==    by 0x400C27: main (indexer.c:33)
+==24182== 
+==24182== 
+==24182== 700 errors in context 12 of 15:
+==24182== Conditional jump or move depends on uninitialised value(s)
+==24182==    at 0x40135E: print_trie (trie.c:71)
+==24182==    by 0x4013A4: print_trie (trie.c:77)
+==24182==    by 0x401EA9: build_trie (trie.c:303)
+==24182==    by 0x401A25: build_trie (trie.c:222)
+==24182==    by 0x400C27: main (indexer.c:33)
+==24182== 
+==24182== 
+==24182== 2801 errors in context 13 of 15:
+==24182== Conditional jump or move depends on uninitialised value(s)
+==24182==    at 0x40135E: print_trie (trie.c:71)
+==24182==    by 0x4013A4: print_trie (trie.c:77)
+==24182==    by 0x401EA9: build_trie (trie.c:303)
+==24182==    by 0x400C27: main (indexer.c:33)
+==24182== 
+==24182== 
+==24182== 3465 errors in context 14 of 15:
+==24182== Conditional jump or move depends on uninitialised value(s)
+==24182==    at 0x40135E: print_trie (trie.c:71)
+==24182==    by 0x4013A4: print_trie (trie.c:77)
+==24182==    by 0x4013A4: print_trie (trie.c:77)
+==24182==    by 0x401EA9: build_trie (trie.c:303)
+==24182==    by 0x401A25: build_trie (trie.c:222)
+==24182==    by 0x400C27: main (indexer.c:33)
+==24182== 
+==24182== 
+==24182== 8429 errors in context 15 of 15:
+==24182== Conditional jump or move depends on uninitialised value(s)
+==24182==    at 0x40135E: print_trie (trie.c:71)
+==24182==    by 0x4013A4: print_trie (trie.c:77)
+==24182==    by 0x4013A4: print_trie (trie.c:77)
+==24182==    by 0x4013A4: print_trie (trie.c:77)
+==24182==    by 0x401EA9: build_trie (trie.c:303)
+==24182==    by 0x401A25: build_trie (trie.c:222)
+==24182==    by 0x400C27: main (indexer.c:33)
+==24182== 
+--24182-- 
+--24182-- used_suppression:      4 U1004-ARM-_dl_relocate_object
+--24182-- used_suppression:      2 glibc-2.5.x-on-SUSE-10.2-(PPC)-2a
+==24182== 
+==24182== ERROR SUMMARY: 15977 errors from 15 contexts (suppressed: 6 from 6)
