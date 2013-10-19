@@ -2,30 +2,45 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <dirent.h>
+#include <string.h>
+#include <ctype.h>
 
 #include "trie.h"
 #include "util.h"
 
-int compare_tuple(TuplePtr t1, TuplePtr t2) {
-    return ((t1->count)-(t2->count));
-}
 
-bool is_file (const char * path) {
-    FILE *f;
-    if (!(f = fopen(path, "r"))) {
-	return false;
+//call like this strtolower(string);
+void strtolower(char *string) {
+    int i, len;
+    len = strlen(string);
+    for (i=0; i<len; i++) {
+	string[i] = tolower(string[i]);	
     }
-    fclose(f);
-    return true;
+    return;
 }
 
-bool is_dir (const char* path) {
+
+int is_file (const char * path) {
+    FILE *f = fopen(path, "r");
+    if (f) {
+	fclose(f);
+	return 1;
+    }
+    else {
+	return 0;
+    }
+}
+
+int is_dir (const char* path) {
     DIR* dir = opendir(path);
-    if (!dir) {
-	return false;
+    if (dir) {
+	closedir(dir);
+	return 1;
     }
-    closedir(dir);
-    return true;
+    else {
+	return 0;
+    }
+
 }
 
 

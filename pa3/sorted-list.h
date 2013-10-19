@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include "tuple.h"
 
-typedef int (*CompareFuncT)(TuplePtr *, TuplePtr*);
+typedef int (*CompareFuncT)(TuplePtr, TuplePtr);
 
 typedef struct Node *NodePtr;
 struct Node

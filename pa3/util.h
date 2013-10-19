@@ -11,10 +11,12 @@
 typedef enum {false, true} bool;
 
 
+void strtolower(char *string);
+
 int compare_tuple(TuplePtr t1, TuplePtr t2);
 
-bool is_file (const char * path);
+int is_file (const char * path);
 
-bool is_dir (const char* path);
+int is_dir (const char* path);
 
 #endif

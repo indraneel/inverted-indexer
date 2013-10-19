@@ -8,19 +8,14 @@
 #include "tuple.h"
 #include "sorted-list.h"
 #include "tokenizer.c"
+#include "util.h"
 
 TrieNodePtr create_trienode(char c, TrieNodePtr parent) {
-    /*printf("char c for this trienode = %c\n", c);
-    if (parent) {
-	printf("char c for the parent  = %c\n", parent->c);
-    }*/
-    CompareFuncT func = &compare_tuple;
     TrieNodePtr node = (TrieNodePtr) malloc (sizeof(struct TrieNode));
     node->c = c;
     node->parent = parent;
     node->children = malloc(36*sizeof(struct TrieNode));
     node->is_word = false;
-    node->list = SLCreate(func); //needs a function pointer
     return node;
 }
 
@@ -41,16 +36,8 @@ void destroy_trienode(TrieNodePtr node) {
     return;
 }
 
-/*TODO
- * change param to initial path name
- *
- */
 TrieNodePtr create_trie() {
     TrieNodePtr root = create_trienode(' ', NULL);    
-    TrieNodePtr ptr = root;
-    int character;
-    int converted;
-    int buffer;
     return root;
 }
 
@@ -61,10 +48,12 @@ TrieNodePtr get_root(TrieNodePtr node) {
     return node;
 }
 
-//void print_trie(TrieNodePtr node, int depth, char *outbuf) {
+int write_to_file(TrieNodePtr node, FILE *output) {
+
+}
+
 void print_trie(TrieNodePtr node, int depth) {
     int i;
-    //printf("\n");
     if (!node) return;
     if (!node->children) return;
     for (i=0; i<36; i++) {
@@ -72,19 +61,15 @@ void print_trie(TrieNodePtr node, int depth) {
 	    continue;
 	}
 	if ((node->children[i])) {
-	    //printf("current node char c = '%c'\n", node->c);
-	    //printf("node char c of child #%d = '%c'\n", i, ((node->children[i]))->c);
 	    print_trie(node->children[i], depth+1);
 	}
     }
     
     if (node->is_word) {
-	//printf("this node = %s\tdepth = %d\n", node->word, depth);
 	printf("%s => [", node->word);
 	SortedListIteratorPtr iter = SLCreateIterator(node->list); 
 	void *item;	
 	item = SLNextItem(iter);
-	//printf("\niterating over node->list\n");
 	while(item) {
 	    //it matched something in list, update count and break
 	    printf("{%s,%d}", ((TuplePtr)item)->fileName, ((TuplePtr)item)->count);
@@ -98,20 +83,155 @@ void print_trie(TrieNodePtr node, int depth) {
     return;
 }
 
-//call like this strtolower(string);
-void strtolower(char *string) {
-    int i, len;
-    len = strlen(string);
-    //char *output = (char *) malloc(len*sizeof(char));
-    for (i=0; i<len; i++) {
-	string[i] = tolower(string[i]);	
+
+
+/*
+ * Subtracts 97 from letters to index a at 0 and z and 25
+ * Starts indexing numbers at 26 (0 at 26)
+ * -1 if anything else makes it way in
+ */
+int convert_char(const char c) {
+    if (isalpha(c)) {
+	return (int) (c - 'a');
     }
-    //return output;
-    return;
+    else if (isdigit(c)) {
+	return (int) (c - '0')+26;	
+    }
+    else {
+	return -1;
+    }
 }
 
+int add_to_trie(TrieNodePtr node, char *token, char *path) {
+    int found_word = 0;
+    int pos = 0;
+    TuplePtr tuple;
+    void *item;
+
+    for (pos=0; pos<strlen(token); pos++) {
+	item = NULL;
+	//is not alpha
+	int converted = convert_char(token[pos]);
+	if (node->children[converted] == NULL) {
+	    node->children[converted] = create_trienode(token[pos], node);
+	    CompareFuncT func = &compare_tuple;
+	    node->list = SLCreate(func); //needs a function pointer
+	}
+	node = node->children[converted];
+
+	//if we reach the end of the token, it's a word
+	if (node->c != ' ' && (pos == strlen(token)-1)) {
+	    node->is_word = true;
+	    node->word = (char *) malloc(strlen(token) + 1);
+	    strcpy(node->word, token);
+	    
+	    tuple = (TuplePtr) malloc(sizeof(struct Tuple));
+	    if (!tuple) {
+		fprintf(stderr, "Tuple failed to be malloc'd\n");
+		return 1;
+	    }
+	    tuple->fileName = (char*) malloc(strlen(path) + 1);
+	    strcpy(tuple->fileName, path);
+	    tuple->count = 1;
+
+	    SortedListIteratorPtr iter = SLCreateIterator(node->list);
+	    if (!iter) {
+		fprintf(stderr, "SLIterator failed to be created\n");
+		return 1;
+	    }
+	    item = SLNextItem(iter);
+	    while(item) {
+		//it matched something in list, update count and break
+		if (strcmp((((TuplePtr)item)->fileName), path) == 0) {
+		    //printf("there's a dupe!\n");	
+		    (((TuplePtr)item)->count) = (((TuplePtr)item)->count)+1;
+		    found_word = 1;
+		}
+		    //printf("tuple: {%s,%d}", ((TuplePtr)item)->fileName, ((TuplePtr)item)->count);
+		    item = SLNextItem(iter);
+		    if(item)
+			    printf("->");
+	    }
+	    //printf("\n\n");
+
+	    if (found_word == 0) {
+		//printf("inserting tuple: {%s,%d}", tuple->fileName, tuple->count);
+		SLInsert(node->list, tuple); 
+	    }
+
+	    SLDestroyIterator(iter);
+	    free(tuple);		
+	    node = get_root(node);
+	}
+    }
+    //printf("\n");
+}
+
+void index_file(TrieNodePtr node, const char *filename) {
+    FILE *file;
+    TokenizerT *tok;
+    char *file_contents, *token;
+    size_t nmemb;
+
+    file = fopen(filename, "r");
+    if (!file) {
+	fprintf(stderr, "Error: %s could not be opened for indexing.\n", filename);
+    }
+
+    //Copy all of the file into a string
+    fseek(file, 0, SEEK_END);
+    nmemb = ftell(file);
+    rewind(file);
+    file_contents = (char *) malloc(nmemb * sizeof(char));
+    fclose(file);
+
+    tok = TKCreate(file_contents);
+    if (tok) {
+	while ((token = TKGetNextToken(tok)) != NULL) {
+	    strtolower(token);
+	    add_to_trie(node, token, filename);
+	}
+	TKDestroy(tok);
+    }
+    else {
+	fprintf(stderr, "Error: Tokenizer not properly created.\n");
+    }
+}
+
+void index_dir(TrieNodePtr node, const char *dirpath) {
+    DIR *dir;    
+    struct dirent *entry;
+
+    dir = opendir(dirpath);
+    if (!dir) {
+	fprintf(stderr, "Directory '%s' did not open\n:", dirpath);
+    }
+    else {
+	//wamedoomadirwalk
+	while ( (entry = readdir(dir)) ) {
+	    size_t size = strlen(entry->d_name) + strlen(dirpath) + 2;
+	    char *name = calloc(size, sizeof(char));
+	    snprintf(name, size, "%s/%s", dirpath, entry->d_name);
+	    
+	    if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
+		continue;
+	    }
+
+	    else if (is_dir(name)) {
+		index_dir(node, name);
+	    }
+
+	    else if (is_file(name)) {
+		index_file(node, name);
+	    }
+	}
+	closedir(dir);
+    }
+}
+
+/*
 void build_trie(TrieNodePtr node, char *path) {
-    char character, *file_contents, *token;//, *output;
+    char *file_contents, *token;//, *output;
     FILE *file;
     DIR *dir;
     struct dirent *entry;
@@ -255,7 +375,7 @@ void build_trie(TrieNodePtr node, char *path) {
 			else {
 			    converted = token[pos] - 87;
 			}
-			if (!node->children[converted]) {
+			if (node->children[converted] == NULL) {
 			    //printf("\ncreating a new node\n");
 			    node->children[converted] = create_trienode(token[pos], node);
 			}
@@ -310,4 +430,5 @@ void build_trie(TrieNodePtr node, char *path) {
     }
     return;
 }
+*/
 

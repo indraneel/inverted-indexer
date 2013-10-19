@@ -24,5 +24,10 @@ void destroy_trienode(TrieNodePtr node);
 // Tree Methods
 TrieNodePtr create_trie();
 void build_trie(TrieNodePtr node, char *path);
+TrieNodePtr get_root(TrieNodePtr node);
+
+//Indexing methods
+void index_file(TrieNodePtr node, const char *filename);
+void index_dir(TrieNodePtr node, const char *dirpath);
 
 #endif

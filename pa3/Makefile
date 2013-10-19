@@ -5,16 +5,28 @@ CC = gcc
 CFLAGS = -g -Wall
 
 all: index
-	
-index: indexer.c indexer.h util.h util.c trie.c trie.h tokenizer.c sorted-list.h sorted-list.c
-	$(CC) $(CFLAGS) -o index indexer.c trie.c util.c sorted-list.c
 
+index: indexer.o trie.o tokenizer.o sorted-list.o tuple.o util.o
+	$(CC) $(CFLAGS) -o index indexer.o trie.o tokenizer.o sorted-list.o tuple.o util.o
 
-trie: trie.c trie.h
-	$(CC) $(CFLAGS) -o trie trie.c trie.h
+indexer.o: indexer.c indexer.h
+	$(CC) $(CFLAGS) -c indexer.c
 
-tokenizer: tokenizer.c
-	$(CC) $(CFLAGS) -o tokenizer tokenizer.c
+trie.o: trie.c trie.h
+	$(CC) $(CFLAGS) -c trie.c
+
+tokenizer.o: tokenizer.c
+	$(CC) $(CFLAGS) -c tokenizer.c
+
+sorted-list.o: sorted-list.c sorted-list.h
+	$(CC) $(CFLAGS) -c sorted-list.c
+
+tuple.o: tuple.c tuple.h
+	$(CC) $(CFLAGS) -c tuple.c
+
+util.o: util.c util.h
+	$(CC) $(CFLAGS) -c util.c
 
 clean:
-	$(RM) index *.o *~
+	rm -f index
+	rm -f *.o 
