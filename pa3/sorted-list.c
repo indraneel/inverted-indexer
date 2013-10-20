@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "sorted-list.h"
 
 ////////////////////////////////////////
@@ -29,6 +30,17 @@ SortedListPtr sl = malloc(sizeof(struct SortedList));
 	return sl;
 }
 
+void SLPrint(SortedListPtr list) {
+
+	// Free list nodes and then free list
+	NodePtr curr = NULL, next = list->head;
+	while(next != NULL) {
+		curr = next;
+		printf("%p\n", curr);
+		next = curr->next;
+	}
+}
+
 void SLDestroy(SortedListPtr list) {
 
 	// Free list nodes and then free list
@@ -40,6 +52,8 @@ void SLDestroy(SortedListPtr list) {
 	}
 	free(list);
 }
+
+
 
 int SLInsert(SortedListPtr list, void *newObj) {
 

@@ -38,6 +38,7 @@ typedef struct SortedListIterator *SortedListIteratorPtr;
 // List Functions
 ////////////////////////////////////////
 SortedListPtr SLCreate(CompareFuncT cf);
+void SLPrint(SortedListPtr list);
 void SLDestroy(SortedListPtr list);
 int SLInsert(SortedListPtr list, void *newObj);
 int SLRemove(SortedListPtr list, void *newObj);

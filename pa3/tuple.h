@@ -14,6 +14,9 @@ struct Tuple
 };
 typedef struct Tuple* TuplePtr;
 
+int compare_tuple(TuplePtr t1, TuplePtr t2);
+TuplePtr create_tuple();
+
 #endif
 
 
