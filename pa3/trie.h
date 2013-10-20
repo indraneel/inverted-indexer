@@ -22,6 +22,7 @@ TrieNodePtr create_trienode(char c, TrieNodePtr parent);
 void destroy_trienode(TrieNodePtr node);
 
 // Tree Methods
+void  print_trie(TrieNodePtr root, int depth);
 TrieNodePtr create_trie();
 void build_trie(TrieNodePtr node, char *path);
 TrieNodePtr get_root(TrieNodePtr node);

@@ -63,12 +63,13 @@ int main(int argc, char** argv) {
 	//build_trie(root, argv[2]);
 	
 	//save trie to file
-	printf("about to call write_to_file\n");
-	result = write_to_file(root, output);
-	printf("call complete write_to_file\n");
-	if (result == 1) {
+	print_trie(root, 0);
+	//printf("about to call write_to_file\n");
+	//result = write_to_file(root, output);
+	//printf("call complete write_to_file\n");
+	/*if (result == 1) {
 	    printf("something shoulda printed\n"); 
-	}
+	}*/
 	destroy_trienode(root);	
 	fclose(output);
 	return 0;

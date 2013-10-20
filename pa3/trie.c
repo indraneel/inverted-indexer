@@ -11,12 +11,19 @@
 #include "util.h"
 
 TrieNodePtr create_trienode(char c, TrieNodePtr parent) {
+    int i;
     TrieNodePtr node = (TrieNodePtr) malloc (sizeof(struct TrieNode));
     node->c = c;
     node->parent = parent;
-    node->children = malloc(36*sizeof(struct TrieNode));
+    node->children = (TrieNodePtr*)calloc(36,sizeof(TrieNodePtr));
     node->is_word = false;
     node->word = NULL;
+    /*for (i=0; i<36; i++) {
+	memset(node->children[i], 0, sizeof(TrieNodePtr));
+    }*/
+    if (c=='q') {
+	printf("q\n");
+    }
     return node;
 }
 
@@ -28,13 +35,16 @@ void destroy_trienode(TrieNodePtr node) {
     }
 
     for (i=0; i<36; i++) {
+	if (!(node->children[i]) || !(node->children[i]->c)) {
+	    continue;
+	}
 	destroy_trienode((node->children[i]));
     }
 
     if (node->list) {
 	SLDestroy(node->list);
     }
-    free(node->children);
+    //free(node->children);
     free(node);
     return;
 }
@@ -60,9 +70,12 @@ int write_to_file(TrieNodePtr node, FILE *output) {
     void *next;
     TuplePtr tuple;
 
-    if (!node) return found;
-    for (i=0; i<36; i++) {
-	if (node->children) {
+    if (!node){
+	free(node);
+	return found;
+    }
+    if (node->children) {
+	for (i=0; i<36; i++) {
 	    if (node->children[i]) {
 		write_to_file(node->children[i], output);
 	    }
@@ -92,7 +105,7 @@ void print_trie(TrieNodePtr node, int depth) {
     if (!node) return;
     if (!node->children) return;
     for (i=0; i<36; i++) {
-	if (!(node->children[i])) {
+	if (!(node->children[i]) || !(node->children[i]->c)) {
 	    continue;
 	}
 	if ((node->children[i])) {
@@ -147,6 +160,7 @@ int add_to_trie(TrieNodePtr node, char *token, char *path) {
 	item = NULL;
 	//is not alpha
 	int converted = convert_char(token[pos]);
+	if (converted == -1) { continue; }
 	if (node->children[converted] == NULL) {
 	    node->children[converted] = create_trienode(token[pos], node);
 	}
@@ -157,16 +171,16 @@ int add_to_trie(TrieNodePtr node, char *token, char *path) {
 	    if (!node->list) {
 		printf("creating list\n");
 		CompareFuncT func = &compare_tuple;
-		(node)->list = SLCreate(func); //needs a function pointer
-		SLPrint(node->list);
+		node->list = SLCreate(func); //needs a function pointer
+		//SLPrint(node->list);
 	    }
 	    else {
-		SLPrint(node->list);
+		//SLPrint(node->list);
 	    }
 	    node->is_word = true;
 	    node->word = (char *) malloc(strlen(token) + 1);
 	    strcpy(node->word, token);
-	    
+	    printf("node->word = %s @ %p\n", node->word, node->word); 
 	    //tuple = (TuplePtr) malloc(sizeof(struct Tuple));
 	    tuple = create_tuple();
 	    if (!tuple) {
@@ -211,7 +225,8 @@ int add_to_trie(TrieNodePtr node, char *token, char *path) {
 	    }
 
 	    SLDestroyIterator(iter);
-	    free(tuple);		
+	    //free(tuple->fileName);
+	    //free(tuple);		
 	    node = get_root(node);
 	}
     }
@@ -241,10 +256,13 @@ void index_file(TrieNodePtr node, char *filename) {
     tok = TKCreate(file_contents);
     if (tok) {
 	token = NULL;
+	printf("\nabout to add toke = %s @ %p to trie\n", token, token);
 	while ((token = TKGetNextToken(tok)) != NULL) {
 	    strtolower(token);
 	    add_to_trie(node, token, filename);
 	}
+	token = NULL;
+	free(token);
 	TKDestroy(tok);
     }
     else {
