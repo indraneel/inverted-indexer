@@ -27,7 +27,9 @@ void build_trie(TrieNodePtr node, char *path);
 TrieNodePtr get_root(TrieNodePtr node);
 
 //Indexing methods
-void index_file(TrieNodePtr node, const char *filename);
-void index_dir(TrieNodePtr node, const char *dirpath);
+void index_file(TrieNodePtr node, char *filename);
+void index_dir(TrieNodePtr node, char *dirpath);
+int write_to_file(TrieNodePtr node, FILE *output);
+int add_to_trie(TrieNodePtr node, char *token, char *path);
 
 #endif

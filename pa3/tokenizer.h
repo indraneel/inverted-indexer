@@ -22,6 +22,10 @@ int is_oct_digit(char oct_digit);
 char* unescape_string(char* string);
 
 
-TokenizerT *TKCreate(char *ts) {
+TokenizerT *TKCreate(char *ts);
+void TKDestroy(TokenizerT *tk);
+
+char is_delimiter(char character);
+char *TKGetNextToken(TokenizerT *tk);
 
 #endif

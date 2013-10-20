@@ -10,7 +10,7 @@
 #include "util.h"
 
 int main(int argc, char** argv) {
-
+	int result;
 	FILE *output;
 	if (argc != 3) {
 		fprintf(stderr, "Error: Improper amount of arguments\nUsage: index <inverted-index file name> <directory or file name>\n");	
@@ -63,8 +63,10 @@ int main(int argc, char** argv) {
 	//build_trie(root, argv[2]);
 	
 	//save trie to file
-	write_to_file(root, output);
-
+	result = write_to_file(root, output);
+	if (result == 1) {
+	    printf("something shoulda printed\n"); 
+	}
 	destroy_trienode(root);	
 	fclose(output);
 	return 0;
