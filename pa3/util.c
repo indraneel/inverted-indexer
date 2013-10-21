@@ -19,6 +19,9 @@ void strtolower(char *string) {
     return;
 }
 
+int compare_token(void *t1, void *t2) {
+    return strcmp(((char *)t1), ((char*)t2));
+}
 
 int is_file (const char * path) {
     FILE *f = fopen(path, "r");

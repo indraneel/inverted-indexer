@@ -73,7 +73,7 @@ int SLInsert(SortedListPtr list, void *newObj) {
 	NodePtr curr = list->head, prev = NULL;
 	while(curr != NULL) {
 		// Keep looking
-		if(list->compare(node->obj, curr->obj) < 0) {
+		if(list->compare(node->obj, curr->obj) > 0) {
 			prev = curr;
 			curr = curr->next;
 		}

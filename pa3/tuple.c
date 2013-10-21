@@ -2,7 +2,9 @@
 #include <string.h>
 
 int compare_tuple(TuplePtr t1, TuplePtr t2) {
-    return strcmp( t1->fileName, t2->fileName );
+    int result;
+    result = (t2->count)-(t1->count);
+    return result == 0 ? strcmp( t1->fileName, t2->fileName ) : result;
 }
 
 TuplePtr create_tuple()  {

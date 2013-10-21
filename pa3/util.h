@@ -13,7 +13,7 @@ typedef enum {false, true} bool;
 
 void strtolower(char *string);
 
-int compare_tuple(TuplePtr t1, TuplePtr t2);
+int compare_token(void *t1, void *t2);
 
 int is_file (const char * path);
 

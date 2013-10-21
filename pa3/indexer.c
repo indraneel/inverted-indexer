@@ -42,16 +42,17 @@ int main(int argc, char** argv) {
 	}
 	
 	TrieNodePtr root = create_trie();
-	
+	SortedListPtr tokenlist = SLCreate(&compare_token);	
+
 	if (is_dir(argv[2]) == 1) {
 	    printf("This is a directory\n");
-	    index_dir(root, argv[2]);
+	    index_dir(root, argv[2], tokenlist);
 	    //add_dir_to_trie
 	    //
 	}
 	else if (is_file(argv[2]) == 1) {
 	    printf("This is a file\n"); 
-	    index_file(root, argv[2]);
+	    index_file(root, argv[2], tokenlist);
 	}
 
 	else {
@@ -61,12 +62,19 @@ int main(int argc, char** argv) {
 	}
 	
 	//build_trie(root, argv[2]);
-	
+	printf("print tokenlist\n");
+	SortedListIteratorPtr tokeniter = SLCreateIterator(tokenlist);  
+	void * next = NULL;
+	while ( ((next= SLNextItem(tokeniter)) != NULL)) {
+	    printf("token = %s\n", (char *)next);
+	}
+	SLDestroyIterator(tokeniter);
+	SLDestroy(tokenlist);
 	//save trie to file
-	print_trie(root, 0);
-	//printf("about to call write_to_file\n");
-	//result = write_to_file(root, output);
-	//printf("call complete write_to_file\n");
+	//print_trie(root, 0);
+	printf("about to call write_to_file\n");
+	result = write_to_file(root, output, tokenlist);
+	printf("call complete write_to_file\n");
 	/*if (result == 1) {
 	    printf("something shoulda printed\n"); 
 	}*/

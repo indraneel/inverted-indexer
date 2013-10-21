@@ -1,0 +1,53 @@
+Tests for overall program: 
+
+typetest.txt - The quick brown brown fox jumps over the lazy dog
+animals.txt - lazy dog over the fox
+dog - dog dog dog dog
+animals2.txt - The jumps fox jumps over the quick brown jumps dog
+typo.typo - The dog hit the bro1wn dog
+money.txt - I made $$$
+moneytypo.txt - Th$3$e dog made 9$$$
+moretext - random words
+blank.txt - [blank file]
+blank2.txt - $$(@*#@(!”:::/
+email2.txt - i.m.indraneel@gmail.com
+
+
+3 -> ./testcases/shane/text/moneytypo.txt, 1
+hi guis3 -> ./testcases/indraneel/text/moneytypo.txt,1 
+9 -> moneytypo, 1
+93 -> email, 1
+bro1wn -> typo, 1
+brown -> typetest, 2; animals2, 1
+com -> email2, 1; email, 1
+dog -> dog, 4; typo, 2; typetest, 1; moneytypo, 1; animals2, 1; animals, 1
+e -> moneytypo, 1
+fox -> typetest, 1; animals2, 1; animals, 1
+gmail -> email2, 1; email, 1
+hit -> typo, 1
+i -> money, 1; email2, 1
+indraneel -> email2, 1
+jumps -> animals2, 3; typetest, 1
+lazy -> typetest, 1; animals2, 1; animals, 1
+m -> emails2, 1
+made -> moneytypo, 1; money, 1
+ohanlon93 -> email, 1
+over -> typetest, 1; animals2, 1; animals, 1
+quick -> typetest, 1; animals2, 1
+random -> moretext, 1
+shane -> email, 1
+th -> moneytypo, 1
+the -> typo, 2; typetest, 2; animals2, 2; animals, 1
+words -> moretext, 1
+
+*how should directories work? 
+[should add identical files to different paths]
+
+Error cases: 
+-file already exists
+-name of directory does not exist
+-name of file does not exist
+-improperly formatted file (?)
+
+
+- Does not handle Windows written files

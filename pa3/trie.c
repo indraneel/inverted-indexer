@@ -11,8 +11,12 @@
 #include "util.h"
 
 TrieNodePtr create_trienode(char c, TrieNodePtr parent) {
-    int i;
+    //int i;
     TrieNodePtr node = (TrieNodePtr) malloc (sizeof(struct TrieNode));
+    if (!node) {
+	fprintf(stderr, "Malloc for node with char c = %c and parent c = %c failed\n",c, parent->c);
+	exit(-1);
+    }
     node->c = c;
     node->parent = parent;
     node->children = (TrieNodePtr*)calloc(36,sizeof(TrieNodePtr));
@@ -41,8 +45,12 @@ void destroy_trienode(TrieNodePtr node) {
 	destroy_trienode((node->children[i]));
     }
 
-    if (node->list) {
+    if (node->is_word && node->list) {
 	SLDestroy(node->list);
+    }
+    else { 
+	//SLDestroy(node->list);
+	node->list = 0;
     }
     //free(node->children);
     free(node);
@@ -62,11 +70,11 @@ TrieNodePtr get_root(TrieNodePtr node) {
     return node;
 }
 
-int write_to_file(TrieNodePtr node, FILE *output) {
-    int i, count, found; 
+int write_to_file(TrieNodePtr node, FILE *output, SortedListPtr tokenlist) {
+    int i, count, found, first; 
     count = 0;
     found = 0;
-    SortedListIteratorPtr iter;
+    SortedListIteratorPtr iter, tokeniter;
     void *next;
     TuplePtr tuple;
 
@@ -77,19 +85,30 @@ int write_to_file(TrieNodePtr node, FILE *output) {
     if (node->children) {
 	for (i=0; i<36; i++) {
 	    if (node->children[i]) {
-		write_to_file(node->children[i], output);
+		write_to_file(node->children[i], output, tokenlist );
 	    }
 	}
     }
+    
 
     if (node->is_word && node->list) {
 	found = 1;
-
+	count = 0;
+	first = 1;
 	iter = SLCreateIterator(node->list);
 	//while ((tuple = (TuplePtr)SLNextItem(iter)) != NULL) {
-	while ((next= SLNextItem(iter)) != NULL) {
+	while (count < 5 && ((next= SLNextItem(iter)) != NULL)) {
 	    tuple = (TuplePtr) next;
-	    fprintf(output, "<list> %s\n%s %d", node->word, ((TuplePtr) next)->fileName, ((TuplePtr) next)->count);
+	    if (first == 1) {
+		fprintf(output, "<list> %s\n %s %d", node->word, ((TuplePtr) next)->fileName, ((TuplePtr) next)->count);
+	    }
+
+	    else {
+		fprintf(output, " %s %d", ((TuplePtr) next)->fileName, ((TuplePtr) next)->count);
+	    }
+	    
+	    count = count+1;
+	    first = 0;
 	}
 	SLDestroyIterator(iter);
     }
@@ -153,7 +172,7 @@ int convert_char(const char c) {
 int add_to_trie(TrieNodePtr node, char *token, char *path) {
     int found_word = 0;
     int pos = 0;
-    TuplePtr tuple;
+    TuplePtr tuple, temp;
     void *item;
 
     for (pos=0; pos<strlen(token); pos++) {
@@ -208,8 +227,11 @@ int add_to_trie(TrieNodePtr node, char *token, char *path) {
 		//it matched something in list, update count and break
 		    if (strcmp( (((TuplePtr)item)->fileName), path) == 0) {
 			//printf("there's a dupe!\n");	
-			(((TuplePtr)item)->count) = (((TuplePtr)item)->count)+1;
+			//(((TuplePtr)item)->count) = (((TuplePtr)item)->count)+1;
+			(((TuplePtr)tuple)->count) = (((TuplePtr)item)->count)+1;
+			SLRemove(node->list, item);
 			found_word = 1;
+			break;
 		    }
 		}
 		    //printf("tuple: {%s,%d}", ((TuplePtr)item)->fileName, ((TuplePtr)item)->count);
@@ -219,9 +241,10 @@ int add_to_trie(TrieNodePtr node, char *token, char *path) {
 	    }
 	    //printf("\n\n");
 
+	    SLInsert(node->list, tuple); 
 	    if (found_word == 0) {
 		//printf("inserting tuple: {%s,%d}", tuple->fileName, tuple->count);
-		SLInsert(node->list, tuple); 
+		//SLInsert(node->list, tuple); 
 	    }
 
 	    SLDestroyIterator(iter);
@@ -233,8 +256,7 @@ int add_to_trie(TrieNodePtr node, char *token, char *path) {
     //printf("\n");
     return 0;
 }
-
-void index_file(TrieNodePtr node, char *filename) {
+void index_file(TrieNodePtr node, char *filename, SortedListPtr tokenlist) {
     FILE *file;
     TokenizerT *tok;
     char *file_contents, *token;
@@ -259,6 +281,7 @@ void index_file(TrieNodePtr node, char *filename) {
 	printf("\nabout to add toke = %s @ %p to trie\n", token, token);
 	while ((token = TKGetNextToken(tok)) != NULL) {
 	    strtolower(token);
+	    SLInsert(tokenlist, token);
 	    add_to_trie(node, token, filename);
 	}
 	token = NULL;
@@ -271,7 +294,7 @@ void index_file(TrieNodePtr node, char *filename) {
     free(file_contents);
 }
 
-void index_dir(TrieNodePtr node, char *dirpath) {
+void index_dir(TrieNodePtr node, char *dirpath, SortedListPtr tokenlist) {
     DIR *dir;    
     struct dirent *entry;
 
@@ -291,11 +314,11 @@ void index_dir(TrieNodePtr node, char *dirpath) {
 	    }
 
 	    else if (is_dir(name)) {
-		index_dir(node, name);
+		index_dir(node, name, tokenlist);
 	    }
 
 	    else if (is_file(name)) {
-		index_file(node, name);
+		index_file(node, name, tokenlist);
 	    }
 	}
 	closedir(dir);

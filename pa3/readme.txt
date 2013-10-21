@@ -22,3 +22,6 @@ The rest of the algorithm is quite straightfoward.
 
 This, obviously, takes linear time.
 
+
+A very big bug was in dealing with Windows files.
+##This program does not handle text files that were created on a Windows-based machine##
